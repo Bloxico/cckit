@@ -12,7 +12,7 @@ import (
 	"sync"
 	"unicode/utf8"
 
-	"github.com/IvaJovicic/slaff-libs/models"
+	"github.com/Bloxico/sl-v3-be-hlf-util-helpers/models"
 	"github.com/hyperledger/fabric-chaincode-go/shim"
 	"github.com/hyperledger/fabric-chaincode-go/shimtest"
 	"github.com/hyperledger/fabric-protos-go/ledger/queryresult"
@@ -20,6 +20,7 @@ import (
 	pb "github.com/hyperledger/fabric-protos-go/peer"
 	"github.com/hyperledger/fabric/msp"
 	"github.com/pkg/errors"
+	gologging "github.com/op/go-logging"
 	"github.com/s7techlab/cckit/convert"
 )
 
@@ -388,6 +389,9 @@ type PrivateMockStateRangeQueryIterator struct {
 	Current    *list.Element
 	Collection string
 }
+
+// Logger for the shim package.
+var mockLogger = gologging.MustGetLogger("mock")
 
 // HasNext returns true if the range query iterator contains additional keys
 // and values.
