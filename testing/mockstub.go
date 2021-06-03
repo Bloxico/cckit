@@ -12,7 +12,7 @@ import (
 	"sync"
 	"unicode/utf8"
 
-	"github.com/IvaJovicic/slaff-libs/models"
+	"github.com/Bloxico/sl-v3-be-hlf-util-helpers/models"
 	"github.com/hyperledger/fabric-chaincode-go/shim"
 	"github.com/hyperledger/fabric-chaincode-go/shimtest"
 	"github.com/hyperledger/fabric-protos-go/ledger/queryresult"
