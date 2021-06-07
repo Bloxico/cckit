@@ -19,6 +19,7 @@ import (
 	"github.com/hyperledger/fabric-protos-go/peer"
 	pb "github.com/hyperledger/fabric-protos-go/peer"
 	"github.com/hyperledger/fabric/msp"
+	gologging "github.com/op/go-logging"
 	"github.com/pkg/errors"
 	gologging "github.com/op/go-logging"
 	"github.com/s7techlab/cckit/convert"

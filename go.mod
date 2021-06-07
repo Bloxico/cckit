@@ -25,4 +25,4 @@ require (
 	google.golang.org/protobuf v1.25.0
 )
 
-replace github.com/s7techlab/cckit => github.com/github.com/Bloxico/sl-v3-be-hlf-util-cckit v1.0.1
+replace github.com/s7techlab/cckit => github.com/Bloxico/sl-v3-be-hlf-util-cckit v1.0.1
