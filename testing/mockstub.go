@@ -711,6 +711,12 @@ OUTER:
 	for key, value := range stub.State {
 
 		for selectorKey, selectorValue := range selector {
+			fmt.Println("||||||")
+			fmt.Println(selectorKey)
+			fmt.Println(selectorValue)
+			fmt.Println(key)
+			fmt.Println(value)
+
 			queryRes, err := QueryData(key, selectorKey, value, selectorValue)
 			if err != nil {
 				mockLogger.Errorf("%+v", err)
@@ -922,6 +928,8 @@ func (transaction TransactionMock) query(selectorKey string, selectorValue inter
 	switch selectorKey {
 	case "docType":
 		return ValidateProperty(selectorValue, string(transaction.DocType))
+	// case "txID":
+	// 	return ValidateProperty(selectorValue, string(transaction.DocType))
 	// case "senders":
 	// 	return ValidateProperty(selectorValue, string(transaction.Senders))
 	// case "receivers":
