@@ -637,6 +637,32 @@ func ValidateProperty(selectorValue interface{}, originalValue interface{}) (boo
 		return originalValue == equalsValue, nil
 	}
 
+	// Validate in selector
+	if inValues, ok := selectorValueMap["$in"]; ok {
+
+		inValuesBytes, err := json.Marshal(inValues)
+		if err != nil {
+			return false, err
+		}
+
+		if !IsString(originalValue) {
+			// Expected array of string, other not implemented
+			return false, errors.New("Not supported")
+		}
+
+		inValuesArray := []string{}
+		if err := json.Unmarshal(inValuesBytes, &inValuesArray); err != nil {
+			return false, err
+		}
+
+		for _, inValue := range inValuesArray {
+			if inValue == originalValue {
+				return true, nil
+			}
+		}
+		return false, nil
+	}
+
 	return false, errors.New("Not implemented selector")
 }
 
@@ -816,6 +842,13 @@ func CreateModelObject(key string, value []byte) ModelMock {
 			panic("Error reading affiliate data")
 		}
 		return affiliate
+	} else if strings.Contains(key, "transaction") {
+		transaction := TransactionMock{}
+		if err := json.Unmarshal(value, &transaction); err != nil {
+			mockLogger.Errorf("%+v", err)
+			panic("Error reading transaction data")
+		}
+		return transaction
 	}
 	panic("Not implemented model object")
 }
@@ -851,6 +884,8 @@ func (affiliate AffiliateMock) query(selectorKey string, selectorValue interface
 		return ValidateProperty(selectorValue, string(affiliate.Path))
 	case "parentID":
 		return ValidateProperty(selectorValue, string(affiliate.ParentID))
+	case "affiliateID":
+		return ValidateProperty(selectorValue, string(affiliate.AffiliateID))
 	default:
 		return false, errors.New("Wrong selector key")
 	}
@@ -870,6 +905,40 @@ func (affiliate AffiliateMock) sort(nextObj ModelMock, sortKey, sortDirection st
 			return affiliate.Level < nextObj.(AffiliateMock).Level
 		} else {
 			return affiliate.Level > nextObj.(AffiliateMock).Level
+		}
+	default:
+		panic("Not implemented sort key")
+	}
+}
+
+// ########### TRANSACTION MOCK ###########
+
+type TransactionMock struct {
+	models.Transaction
+}
+
+// Query different transaction properties used in transaction chaincode
+func (transaction TransactionMock) query(selectorKey string, selectorValue interface{}) (bool, error) {
+	switch selectorKey {
+	case "docType":
+		return ValidateProperty(selectorValue, string(transaction.DocType))
+	// case "senders":
+	// 	return ValidateProperty(selectorValue, string(transaction.Senders))
+	// case "receivers":
+	// 	return ValidateProperty(selectorValue, string(transaction.Receivers))
+	default:
+		return false, errors.New("Wrong selector key")
+	}
+}
+
+// Sort transactions by given sort properties
+func (transaction TransactionMock) sort(nextObj ModelMock, sortKey, sortDirection string) bool {
+	switch sortKey {
+	case "createdAt":
+		if sortDirection == "asc" {
+			return transaction.CreatedAt < nextObj.(TransactionMock).CreatedAt
+		} else {
+			return transaction.CreatedAt > nextObj.(TransactionMock).CreatedAt
 		}
 	default:
 		panic("Not implemented sort key")
