@@ -757,14 +757,36 @@ OUTER:
 	for key, value := range stub.State {
 		for selectorKey, selectorValue := range selector {
 
-			queryRes, err := QueryData(key, selectorKey, value, selectorValue)
-			if err != nil {
-				mockLogger.Errorf("%+v", err)
-				return nil, err
-			}
+			if strings.Contains(selectorKey, "$or") {
+				orRes := false
+				orSelectorValueArray := selectorValue.(map[string]interface{})
+				for _, orSelectorValueElement := range orSelectorValueArray {
+					orSelectorValueElementData := orSelectorValueElement.(map[string]interface{})
+					for selectorKey, selectorData := range orSelectorValueElementData {
+						queryRes, err := QueryData(key, selectorKey, value, selectorData)
+						if err != nil {
+							mockLogger.Errorf("%+v", err)
+							return nil, err
+						}
 
-			if !queryRes {
-				continue OUTER
+						if queryRes {
+							orRes = true
+						}
+					}
+				}
+				if !orRes {
+					continue OUTER
+				}
+			} else {
+				queryRes, err := QueryData(key, selectorKey, value, selectorValue)
+				if err != nil {
+					mockLogger.Errorf("%+v", err)
+					return nil, err
+				}
+
+				if !queryRes {
+					continue OUTER
+				}
 			}
 		}
 
