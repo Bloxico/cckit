@@ -663,6 +663,52 @@ func ValidateProperty(selectorValue interface{}, originalValue interface{}) (boo
 		return false, nil
 	}
 
+	if IsArray(originalValue) {
+
+		// Selector property is object
+		originalValueArray := originalValue.([]map[string]interface{})
+
+		if elemMatch, ok := selectorValueMap["$elemMatch"]; ok {
+			elemMatchData := elemMatch.(map[string]interface{})
+
+			for _, originalValue := range originalValueArray {
+				if _, ok := elemMatchData["txID"]; !ok {
+					return false, errors.New("Not supported")
+				}
+
+				inValueData := elemMatchData["txID"].(map[string]interface{})
+
+				if _, ok := inValueData["$in"]; !ok {
+					return false, errors.New("Not supported")
+				}
+
+				inValueString := inValueData["$in"].(string)
+
+				inValuesBytes, err := json.Marshal(elemMatchData[inValueString])
+				if err != nil {
+					return false, err
+				}
+
+				inValuesArray := []string{}
+				if err := json.Unmarshal(inValuesBytes, &inValuesArray); err != nil {
+					return false, err
+				}
+
+				if !IsString(originalValue) {
+					// Expected array of string, other not implemented
+					return false, errors.New("Not supported")
+				}
+
+				for _, inValue := range inValuesArray {
+					if inValue == originalValue["txID"] {
+						return true, nil
+					}
+				}
+			}
+			return false, nil
+		}
+	}
+
 	return false, errors.New("Not implemented selector")
 }
 
@@ -709,13 +755,7 @@ func (stub *MockStub) GetQueryResult(query string) (shim.StateQueryIteratorInter
 
 OUTER:
 	for key, value := range stub.State {
-
 		for selectorKey, selectorValue := range selector {
-			fmt.Println("||||||")
-			fmt.Println(selectorKey)
-			fmt.Println(selectorValue)
-			fmt.Println(key)
-			fmt.Println(value)
 
 			queryRes, err := QueryData(key, selectorKey, value, selectorValue)
 			if err != nil {
@@ -842,13 +882,16 @@ type ModelMock interface {
 
 func CreateModelObject(key string, value []byte) ModelMock {
 	if strings.Contains(key, "eCommerceID~affiliateID") {
+
 		affiliate := AffiliateMock{}
 		if err := json.Unmarshal(value, &affiliate); err != nil {
 			mockLogger.Errorf("%+v", err)
 			panic("Error reading affiliate data")
 		}
 		return affiliate
+
 	} else if strings.Contains(key, "transaction") {
+
 		transaction := TransactionMock{}
 		if err := json.Unmarshal(value, &transaction); err != nil {
 			mockLogger.Errorf("%+v", err)
@@ -856,6 +899,7 @@ func CreateModelObject(key string, value []byte) ModelMock {
 		}
 		return transaction
 	}
+
 	panic("Not implemented model object")
 }
 
@@ -928,12 +972,10 @@ func (transaction TransactionMock) query(selectorKey string, selectorValue inter
 	switch selectorKey {
 	case "docType":
 		return ValidateProperty(selectorValue, string(transaction.DocType))
-	// case "txID":
-	// 	return ValidateProperty(selectorValue, string(transaction.DocType))
-	// case "senders":
-	// 	return ValidateProperty(selectorValue, string(transaction.Senders))
-	// case "receivers":
-	// 	return ValidateProperty(selectorValue, string(transaction.Receivers))
+	case "senders":
+		return ValidateProperty(selectorValue, transaction.Senders)
+	case "receivers":
+		return ValidateProperty(selectorValue, transaction.Receivers)
 	default:
 		return false, errors.New("Wrong selector key")
 	}
