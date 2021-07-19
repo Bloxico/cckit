@@ -759,7 +759,15 @@ OUTER:
 
 			if strings.Contains(selectorKey, "$or") {
 				orRes := false
+				orSelectorValueBytes, err := json.Marshal(selectorValue)
+				if err != nil {
+					return nil, err
+				}
 				orSelectorValueArray := selectorValue.([]map[string]interface{})
+				if err := json.Unmarshal(orSelectorValueBytes, &orSelectorValueArray); err != nil {
+					return nil, err
+				}
+
 				for _, orSelectorValueElement := range orSelectorValueArray {
 					for selectorKey, selectorData := range orSelectorValueElement {
 						queryRes, err := QueryData(key, selectorKey, value, selectorData)
