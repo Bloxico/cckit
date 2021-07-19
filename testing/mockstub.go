@@ -759,10 +759,9 @@ OUTER:
 
 			if strings.Contains(selectorKey, "$or") {
 				orRes := false
-				orSelectorValueArray := selectorValue.(map[string]interface{})
+				orSelectorValueArray := selectorValue.([]map[string]interface{})
 				for _, orSelectorValueElement := range orSelectorValueArray {
-					orSelectorValueElementData := orSelectorValueElement.(map[string]interface{})
-					for selectorKey, selectorData := range orSelectorValueElementData {
+					for selectorKey, selectorData := range orSelectorValueElement {
 						queryRes, err := QueryData(key, selectorKey, value, selectorData)
 						if err != nil {
 							mockLogger.Errorf("%+v", err)
