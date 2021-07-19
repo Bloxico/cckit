@@ -763,7 +763,7 @@ OUTER:
 				if err != nil {
 					return nil, err
 				}
-				orSelectorValueArray := selectorValue.([]map[string]interface{})
+				orSelectorValueArray := []map[string]interface{}{}
 				if err := json.Unmarshal(orSelectorValueBytes, &orSelectorValueArray); err != nil {
 					return nil, err
 				}
