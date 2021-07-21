@@ -621,6 +621,15 @@ func IsSlice(data interface{}) bool {
 	return reflect.TypeOf(data).Kind() == reflect.Slice
 }
 
+func IsSupportedStructType(data interface{}) bool {
+	switch data.(type) {
+	case models.Participant:
+	case []models.Participant:
+		return true
+	}
+	return false
+}
+
 func ValidateProperty(selectorValue interface{}, originalValue interface{}) (bool, error) {
 	if !IsMap(selectorValue) {
 		// Selector property is NOT object
@@ -667,20 +676,14 @@ func ValidateProperty(selectorValue interface{}, originalValue interface{}) (boo
 		return false, nil
 	}
 
-	fmt.Println(originalValue)
-
-	fmt.Println("is array", IsArray(originalValue))
-
 	// NOTE: This is not generic, can be improved!
 	if IsArray(originalValue) || IsSlice(originalValue) {
 
-		// Selector property is
-		// TODO
-		originalValueArray := originalValue.([]models.Participant)
-		fmt.Println("*********** ")
-		fmt.Println(reflect.TypeOf(originalValueArray))
+		if !IsSupportedStructType(originalValue) {
+			return false, errors.New("Not implemented validation for selector")
+		}
 
-		fmt.Println("originalValueArray", originalValueArray)
+		originalValueArray := originalValue.([]models.Participant)
 
 		if elemMatch, ok := selectorValueMap["$elemMatch"]; ok {
 			elemMatchData := elemMatch.(map[string]interface{})
@@ -691,8 +694,6 @@ func ValidateProperty(selectorValue interface{}, originalValue interface{}) (boo
 				}
 
 				inValueData := elemMatchData["txID"].(map[string]interface{})
-
-				fmt.Println("inValueData", inValueData)
 
 				if _, ok := inValueData["$in"]; !ok {
 					return false, errors.New("Not supported")
@@ -707,15 +708,12 @@ func ValidateProperty(selectorValue interface{}, originalValue interface{}) (boo
 					return false, err
 				}
 
-				fmt.Println("inValuesArray", inValuesArray)
-
 				if !IsString(originalValue.TxID) {
 					// Expected array of string, other not implemented
 					return false, errors.New("Not supported")
 				}
 
 				for _, inValue := range inValuesArray {
-					fmt.Println("inValue", inValue)
 					if inValue == originalValue.TxID {
 						return true, nil
 					}
@@ -784,13 +782,8 @@ OUTER:
 					return nil, err
 				}
 
-				fmt.Println("orSelectorValueArray ", orSelectorValueArray)
-
 				for _, orSelectorValueElement := range orSelectorValueArray {
-
-					fmt.Println("orSelectorValueElement ", orSelectorValueElement)
 					for selectorKey, selectorData := range orSelectorValueElement {
-						fmt.Println("selectorKey ", selectorKey)
 						queryRes, err := QueryData(key, selectorKey, value, selectorData)
 						if err != nil {
 							mockLogger.Errorf("%+v", err)
@@ -1027,7 +1020,6 @@ func (transaction TransactionMock) query(selectorKey string, selectorValue inter
 	case "receivers":
 		return ValidateProperty(selectorValue, transaction.Receivers)
 	default:
-		fmt.Println(selectorKey)
 		return false, errors.New("Wrong selector key")
 	}
 }
