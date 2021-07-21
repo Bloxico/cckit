@@ -614,6 +614,7 @@ func IsMap(data interface{}) bool {
 }
 
 func IsArray(data interface{}) bool {
+	fmt.Println(reflect.TypeOf(data).Kind())
 	return reflect.TypeOf(data).Kind() == reflect.Array
 }
 
