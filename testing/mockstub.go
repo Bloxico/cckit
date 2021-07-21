@@ -678,7 +678,7 @@ func ValidateProperty(selectorValue interface{}, originalValue interface{}) (boo
 		// TODO
 		originalValueArray := originalValue.([]models.Participant)
 		fmt.Println("*********** ")
-		fmt.Println(reflect.TypeOf(originalValueArray[0]).Kind())
+		fmt.Println(reflect.TypeOf(originalValueArray[0]))
 
 		fmt.Println("originalValueArray", originalValueArray)
 
@@ -700,18 +700,7 @@ func ValidateProperty(selectorValue interface{}, originalValue interface{}) (boo
 					return false, errors.New("Not supported")
 				}
 
-				inValueString := inValueData["$in"].(string)
-				fmt.Println("inValueString", inValueString)
-
-				inValuesBytes, err := json.Marshal(elemMatchData[inValueString])
-				if err != nil {
-					return false, err
-				}
-
-				inValuesArray := []string{}
-				if err := json.Unmarshal(inValuesBytes, &inValuesArray); err != nil {
-					return false, err
-				}
+				inValuesArray := inValueData["$in"].([]string)
 
 				fmt.Println("inValuesArray", inValuesArray)
 
