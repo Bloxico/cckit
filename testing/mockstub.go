@@ -663,10 +663,16 @@ func ValidateProperty(selectorValue interface{}, originalValue interface{}) (boo
 		return false, nil
 	}
 
+	fmt.Println(originalValue)
+
+	fmt.Println("is array", IsArray(originalValue))
+
 	if IsArray(originalValue) {
 
 		// Selector property is object
 		originalValueArray := originalValue.([]map[string]interface{})
+
+		fmt.Println("originalValueArray", originalValueArray)
 
 		if elemMatch, ok := selectorValueMap["$elemMatch"]; ok {
 			elemMatchData := elemMatch.(map[string]interface{})
@@ -676,13 +682,18 @@ func ValidateProperty(selectorValue interface{}, originalValue interface{}) (boo
 					return false, errors.New("Not supported")
 				}
 
+				fmt.Println("ima txID")
+
 				inValueData := elemMatchData["txID"].(map[string]interface{})
+
+				fmt.Println("inValueData", inValueData)
 
 				if _, ok := inValueData["$in"]; !ok {
 					return false, errors.New("Not supported")
 				}
 
 				inValueString := inValueData["$in"].(string)
+				fmt.Println("inValueString", inValueString)
 
 				inValuesBytes, err := json.Marshal(elemMatchData[inValueString])
 				if err != nil {
@@ -694,12 +705,15 @@ func ValidateProperty(selectorValue interface{}, originalValue interface{}) (boo
 					return false, err
 				}
 
+				fmt.Println("inValuesArray", inValuesArray)
+
 				if !IsString(originalValue) {
 					// Expected array of string, other not implemented
 					return false, errors.New("Not supported")
 				}
 
 				for _, inValue := range inValuesArray {
+					fmt.Println("inValue", inValue)
 					if inValue == originalValue["txID"] {
 						return true, nil
 					}
@@ -709,7 +723,7 @@ func ValidateProperty(selectorValue interface{}, originalValue interface{}) (boo
 		}
 	}
 
-	return false, errors.New("Not implemented selector")
+	return false, errors.New("Not implemented validation for selector")
 }
 
 func GetSortPropertyAndDirection(sortElement interface{}) (string, string) {
