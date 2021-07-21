@@ -614,8 +614,11 @@ func IsMap(data interface{}) bool {
 }
 
 func IsArray(data interface{}) bool {
-	fmt.Println(reflect.TypeOf(data).Kind())
 	return reflect.TypeOf(data).Kind() == reflect.Array
+}
+
+func IsSlice(data interface{}) bool {
+	return reflect.TypeOf(data).Kind() == reflect.Slice
 }
 
 func ValidateProperty(selectorValue interface{}, originalValue interface{}) (bool, error) {
@@ -668,13 +671,14 @@ func ValidateProperty(selectorValue interface{}, originalValue interface{}) (boo
 
 	fmt.Println("is array", IsArray(originalValue))
 
-	if IsArray(originalValue) {
+	if IsArray(originalValue) || IsSlice(originalValue) {
 
 		// Selector property is object
 		originalValueArray := originalValue.([]map[string]interface{})
 
 		fmt.Println("originalValueArray", originalValueArray)
 
+		// NOTE: This is not generic, can be improved!
 		if elemMatch, ok := selectorValueMap["$elemMatch"]; ok {
 			elemMatchData := elemMatch.(map[string]interface{})
 
