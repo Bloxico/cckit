@@ -671,14 +671,17 @@ func ValidateProperty(selectorValue interface{}, originalValue interface{}) (boo
 
 	fmt.Println("is array", IsArray(originalValue))
 
+	// NOTE: This is not generic, can be improved!
 	if IsArray(originalValue) || IsSlice(originalValue) {
 
-		// Selector property is object
-		originalValueArray := originalValue.([]map[string]interface{})
+		// Selector property is
+		// TODO
+		originalValueArray := originalValue.([]models.Participant)
+		fmt.Println("*********** ")
+		fmt.Println(reflect.TypeOf(originalValueArray[0]).Kind())
 
 		fmt.Println("originalValueArray", originalValueArray)
 
-		// NOTE: This is not generic, can be improved!
 		if elemMatch, ok := selectorValueMap["$elemMatch"]; ok {
 			elemMatchData := elemMatch.(map[string]interface{})
 
@@ -712,14 +715,14 @@ func ValidateProperty(selectorValue interface{}, originalValue interface{}) (boo
 
 				fmt.Println("inValuesArray", inValuesArray)
 
-				if !IsString(originalValue) {
+				if !IsString(originalValue.TxID) {
 					// Expected array of string, other not implemented
 					return false, errors.New("Not supported")
 				}
 
 				for _, inValue := range inValuesArray {
 					fmt.Println("inValue", inValue)
-					if inValue == originalValue["txID"] {
+					if inValue == originalValue.TxID {
 						return true, nil
 					}
 				}
