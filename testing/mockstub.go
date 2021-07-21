@@ -768,8 +768,13 @@ OUTER:
 					return nil, err
 				}
 
+				fmt.Println("orSelectorValueArray ", orSelectorValueArray)
+
 				for _, orSelectorValueElement := range orSelectorValueArray {
+
+					fmt.Println("orSelectorValueElement ", orSelectorValueElement)
 					for selectorKey, selectorData := range orSelectorValueElement {
+						fmt.Println("selectorKey ", selectorKey)
 						queryRes, err := QueryData(key, selectorKey, value, selectorData)
 						if err != nil {
 							mockLogger.Errorf("%+v", err)
@@ -1006,6 +1011,7 @@ func (transaction TransactionMock) query(selectorKey string, selectorValue inter
 	case "receivers":
 		return ValidateProperty(selectorValue, transaction.Receivers)
 	default:
+		fmt.Println(selectorKey)
 		return false, errors.New("Wrong selector key")
 	}
 }
