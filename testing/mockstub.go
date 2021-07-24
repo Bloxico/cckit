@@ -900,7 +900,7 @@ OUTER:
 		if count == int(pageSize) || len(queriedElements)-1 == index {
 			nextIndex := index + 1
 			if len(queriedElements) <= nextIndex {
-				newBookmark = "" // TODO: Check this
+				newBookmark = ""
 				break
 			}
 			newBookmark = queriedElements[nextIndex]["key"].(string)
