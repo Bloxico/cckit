@@ -3,7 +3,7 @@ module github.com/s7techlab/cckit
 go 1.13
 
 require (
-	github.com/Bloxico/sl-v3-be-hlf-util-helpers v0.0.0-20210716201536-44af68011d23 // indirect
+	github.com/Bloxico/sl-v3-be-hlf-util-helpers v0.0.0-20210728193619-60b2b81dbea5 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b
 	github.com/golang/protobuf v1.4.3

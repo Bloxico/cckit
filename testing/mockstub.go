@@ -1019,6 +1019,8 @@ func (transaction TransactionMock) query(selectorKey string, selectorValue inter
 		return ValidateProperty(selectorValue, transaction.Senders)
 	case "receivers":
 		return ValidateProperty(selectorValue, transaction.Receivers)
+	case "txIDs":
+		return ValidateProperty(selectorValue, transaction.TxIDs)
 	default:
 		return false, errors.New("Wrong selector key")
 	}

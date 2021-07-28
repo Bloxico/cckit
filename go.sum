@@ -12,6 +12,8 @@ github.com/Bloxico/sl-v3-be-hlf-util-helpers v0.0.0-20210603055607-7c46c2781295 
 github.com/Bloxico/sl-v3-be-hlf-util-helpers v0.0.0-20210603055607-7c46c2781295/go.mod h1:TKQPOg/9Kp0fX7c5knS42x6h49BV1GrjH+Ogbvs/bpg=
 github.com/Bloxico/sl-v3-be-hlf-util-helpers v0.0.0-20210716201536-44af68011d23 h1:TT8P4B+rGIb3gfy8AGBzLDpqbWN7tY5z4/eEWAFYJR4=
 github.com/Bloxico/sl-v3-be-hlf-util-helpers v0.0.0-20210716201536-44af68011d23/go.mod h1:TKQPOg/9Kp0fX7c5knS42x6h49BV1GrjH+Ogbvs/bpg=
+github.com/Bloxico/sl-v3-be-hlf-util-helpers v0.0.0-20210728193619-60b2b81dbea5 h1:FPda7CZjdVlf7xH47hU8rR99PYyfAw0c2ysmtYGLmdg=
+github.com/Bloxico/sl-v3-be-hlf-util-helpers v0.0.0-20210728193619-60b2b81dbea5/go.mod h1:TKQPOg/9Kp0fX7c5knS42x6h49BV1GrjH+Ogbvs/bpg=
 github.com/BurntSushi/toml v0.3.1 h1:WXkYYl6Yr3qBf1K79EBnL4mak0OimBfB0XUf9Vl28OQ=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/DataDog/zstd v1.3.6-0.20190409195224-796139022798/go.mod h1:1jcaCB/ufaK+sKp1NBhlGmpz41jOoPQ35bpF36t7BBo=
