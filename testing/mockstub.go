@@ -664,19 +664,13 @@ func ValidateProperty(selectorValue interface{}, originalValue interface{}) (boo
 			return false, err
 		}
 
-		fmt.Println(originalValue)
-		fmt.Println(IsString(originalValue))
-		fmt.Println(IsArray(originalValue))
-		fmt.Println(reflect.TypeOf(originalValue))
-		fmt.Println(reflect.TypeOf(originalValue).Kind())
-
 		if IsString(originalValue) {
 			for _, inValue := range inValuesArray {
 				if inValue == originalValue {
 					return true, nil
 				}
 			}
-		} else if IsArray(originalValue) {
+		} else if IsArray(originalValue) || IsSlice(originalValue) {
 			originalValueBytes, err := json.Marshal(originalValue)
 			if err != nil {
 				return false, err
