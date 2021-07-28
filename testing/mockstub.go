@@ -13,6 +13,7 @@ import (
 	"unicode/utf8"
 
 	"github.com/Bloxico/sl-v3-be-hlf-util-helpers/models"
+	"github.com/Bloxico/sl-v3-be-hlf-util-helpers/utils"
 	"github.com/hyperledger/fabric-chaincode-go/shim"
 	"github.com/hyperledger/fabric-chaincode-go/shimtest"
 	"github.com/hyperledger/fabric-protos-go/ledger/queryresult"
@@ -658,21 +659,37 @@ func ValidateProperty(selectorValue interface{}, originalValue interface{}) (boo
 			return false, err
 		}
 
-		if !IsString(originalValue) {
-			// Expected array of string, other not implemented
-			return false, errors.New("Not supported")
-		}
-
 		inValuesArray := []string{}
 		if err := json.Unmarshal(inValuesBytes, &inValuesArray); err != nil {
 			return false, err
 		}
 
-		for _, inValue := range inValuesArray {
-			if inValue == originalValue {
-				return true, nil
+		if IsString(originalValue) {
+			for _, inValue := range inValuesArray {
+				if inValue == originalValue {
+					return true, nil
+				}
 			}
+		} else if IsArray(originalValue) {
+			originalValueBytes, err := json.Marshal(originalValue)
+			if err != nil {
+				return false, err
+			}
+
+			originalValueArray := []string{}
+			if err := json.Unmarshal(originalValueBytes, &originalValueArray); err != nil {
+				return false, err
+			}
+
+			for _, inValue := range inValuesArray {
+				if utils.Contains(originalValueArray, inValue) {
+					return true, nil
+				}
+			}
+		} else {
+			return false, errors.New("Not supported $in selector values")
 		}
+
 		return false, nil
 	}
 
