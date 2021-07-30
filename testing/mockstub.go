@@ -786,6 +786,7 @@ func (stub *MockStub) GetQueryResult(query string) (shim.StateQueryIteratorInter
 
 OUTER:
 	for key, value := range stub.State {
+		_, keyParts, _ := stub.SplitCompositeKey(key)
 		for selectorKey, selectorValue := range selector {
 
 			if strings.Contains(selectorKey, "$or") {
@@ -801,7 +802,7 @@ OUTER:
 
 				for _, orSelectorValueElement := range orSelectorValueArray {
 					for selectorKey, selectorData := range orSelectorValueElement {
-						queryRes, err := QueryData(key, selectorKey, value, selectorData)
+						queryRes, err := QueryData(key, keyParts, selectorKey, value, selectorData)
 						if err != nil {
 							mockLogger.Errorf("%+v", err)
 							return nil, err
@@ -816,7 +817,7 @@ OUTER:
 					continue OUTER
 				}
 			} else {
-				queryRes, err := QueryData(key, selectorKey, value, selectorValue)
+				queryRes, err := QueryData(key, keyParts, selectorKey, value, selectorValue)
 				if err != nil {
 					mockLogger.Errorf("%+v", err)
 					return nil, err
@@ -871,8 +872,9 @@ func (stub *MockStub) GetQueryResultWithPagination(query string, pageSize int32,
 	queriedElements := []map[string]interface{}{}
 OUTER:
 	for key, value := range stub.State {
+		_, keyParts, _ := stub.SplitCompositeKey(key)
 		for selectorKey, selectorValue := range selector {
-			queryRes, err := QueryData(key, selectorKey, value, selectorValue)
+			queryRes, err := QueryData(key, keyParts, selectorKey, value, selectorValue)
 			if err != nil {
 				mockLogger.Errorf("%+v", err)
 				return nil, nil, err
@@ -936,7 +938,7 @@ OUTER:
 // ########### MODEL MOCK ###########
 
 type ModelMock interface {
-	query(selectorKey string, selectorValue interface{}) (bool, error)
+	query(selectorKey string, selectorValue interface{}, keyParts []string) (bool, error)
 	sort(nextObj ModelMock, sortKey, sortDirection string) bool
 }
 
@@ -963,9 +965,9 @@ func CreateModelObject(key string, value []byte) ModelMock {
 	panic("Not implemented model object")
 }
 
-func QueryData(stubKey, selectorKey string, stubValue []byte, selectorValue interface{}) (bool, error) {
+func QueryData(stubKey string, keyParts []string, selectorKey string, stubValue []byte, selectorValue interface{}) (bool, error) {
 	modelObject := CreateModelObject(stubKey, stubValue)
-	return modelObject.query(selectorKey, selectorValue)
+	return modelObject.query(selectorKey, selectorValue, keyParts)
 }
 
 func SortData(sortKey, sortDirection string, elementsForSort []map[string]interface{}) []map[string]interface{} {
@@ -986,7 +988,7 @@ type AffiliateMock struct {
 }
 
 // Query different affiliate properties used in affiliate chaincode
-func (affiliate AffiliateMock) query(selectorKey string, selectorValue interface{}) (bool, error) {
+func (affiliate AffiliateMock) query(selectorKey string, selectorValue interface{}, keyParts []string) (bool, error) {
 	switch selectorKey {
 	case "docType":
 		return ValidateProperty(selectorValue, string(affiliate.DocType))
@@ -996,6 +998,8 @@ func (affiliate AffiliateMock) query(selectorKey string, selectorValue interface
 		return ValidateProperty(selectorValue, string(affiliate.ParentID))
 	case "affiliateID":
 		return ValidateProperty(selectorValue, string(affiliate.AffiliateID))
+	case "_id":
+		return ValidateProperty(selectorValue, keyParts[0])
 	default:
 		return false, errors.New("Wrong selector key")
 	}
@@ -1028,7 +1032,7 @@ type TransactionMock struct {
 }
 
 // Query different transaction properties used in transaction chaincode
-func (transaction TransactionMock) query(selectorKey string, selectorValue interface{}) (bool, error) {
+func (transaction TransactionMock) query(selectorKey string, selectorValue interface{}, keyParts []string) (bool, error) {
 	switch selectorKey {
 	case "docType":
 		return ValidateProperty(selectorValue, string(transaction.DocType))
