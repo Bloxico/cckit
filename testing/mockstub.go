@@ -1049,14 +1049,5 @@ func (transaction TransactionMock) query(selectorKey string, selectorValue inter
 
 // Sort transactions by given sort properties
 func (transaction TransactionMock) sort(nextObj ModelMock, sortKey, sortDirection string) bool {
-	switch sortKey {
-	case "createdAt":
-		if sortDirection == "asc" {
-			return transaction.CreatedAt < nextObj.(TransactionMock).CreatedAt
-		} else {
-			return transaction.CreatedAt > nextObj.(TransactionMock).CreatedAt
-		}
-	default:
-		panic("Not implemented sort key")
-	}
+	panic("Not implemented sort key")
 }
