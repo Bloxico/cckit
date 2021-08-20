@@ -56,6 +56,8 @@ type MockStub struct {
 	ChaincodeEvent              *peer.ChaincodeEvent        // event in last tx
 	chaincodeEventSubscriptions []chan *peer.ChaincodeEvent // multiple event subscriptions
 	PrivateKeys                 map[string]*list.List
+
+	BlockchainTxID string // added for testing
 }
 
 type CreatorTransformer func(...interface{}) (mspID string, certPEM []byte, err error)
@@ -275,7 +277,7 @@ func (stub *MockStub) MockInvoke(uuid string, args [][]byte) peer.Response {
 	// this is a hack here to set MockStub.args, because its not accessible otherwise
 	stub.SetArgs(args)
 
-	stub.TxID = uuid
+	stub.BlockchainTxID = uuid
 
 	// now do the invoke with the correct stub
 	stub.MockTransactionStart(uuid)
@@ -1052,4 +1054,10 @@ func (transaction TransactionMock) query(selectorKey string, selectorValue inter
 // Sort transactions by given sort properties
 func (transaction TransactionMock) sort(nextObj ModelMock, sortKey, sortDirection string) bool {
 	panic("Not implemented sort key")
+}
+
+// ########### BLOCKCHAIN TX MOCK ###########
+
+func (stub *MockStub) GetBlockchainTxId() string {
+	return stub.BlockchainTxID
 }
