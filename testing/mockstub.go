@@ -1051,3 +1051,8 @@ func (transaction TransactionMock) query(selectorKey string, selectorValue inter
 func (transaction TransactionMock) sort(nextObj ModelMock, sortKey, sortDirection string) bool {
 	panic("Not implemented sort key")
 }
+
+// ########### TRANSACTION MOCK ###########
+func (stub *MockStub) GetTxID() string {
+	return stub.TxID
+}
