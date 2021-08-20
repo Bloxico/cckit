@@ -159,8 +159,6 @@ func (stub *MockStub) InvokeChaincode(chaincodeName string, args [][]byte, chann
 			ErrChaincodeNotExists, ccName, channel, chaincodeName, stub.MockedPeerChaincodes()))
 	}
 
-	fmt.Println("---- stub.TxID")
-	fmt.Println(stub.TxID)
 	res := otherStub.MockInvoke(stub.TxID, args)
 	return res
 }
@@ -276,6 +274,8 @@ func (stub *MockStub) MockInvoke(uuid string, args [][]byte) peer.Response {
 
 	// this is a hack here to set MockStub.args, because its not accessible otherwise
 	stub.SetArgs(args)
+
+	stub.TxID = uuid
 
 	// now do the invoke with the correct stub
 	stub.MockTransactionStart(uuid)
