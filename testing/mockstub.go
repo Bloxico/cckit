@@ -159,6 +159,8 @@ func (stub *MockStub) InvokeChaincode(chaincodeName string, args [][]byte, chann
 			ErrChaincodeNotExists, ccName, channel, chaincodeName, stub.MockedPeerChaincodes()))
 	}
 
+	fmt.Println("---- stub.TxID")
+	fmt.Println(stub.TxID)
 	res := otherStub.MockInvoke(stub.TxID, args)
 	return res
 }
@@ -1050,9 +1052,4 @@ func (transaction TransactionMock) query(selectorKey string, selectorValue inter
 // Sort transactions by given sort properties
 func (transaction TransactionMock) sort(nextObj ModelMock, sortKey, sortDirection string) bool {
 	panic("Not implemented sort key")
-}
-
-// ########### TRANSACTION MOCK ###########
-func (stub *MockStub) GetTxID() string {
-	return stub.TxID
 }
