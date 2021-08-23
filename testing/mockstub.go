@@ -710,11 +710,11 @@ func ValidateProperty(selectorValue interface{}, originalValue interface{}) (boo
 			elemMatchData := elemMatch.(map[string]interface{})
 
 			for _, originalValue := range originalValueArray {
-				if _, ok := elemMatchData["txID"]; !ok {
+				if _, ok := elemMatchData["tx_id"]; !ok {
 					return false, errors.New("Not supported")
 				}
 
-				inValueData := elemMatchData["txID"].(map[string]interface{})
+				inValueData := elemMatchData["tx_id"].(map[string]interface{})
 
 				if _, ok := inValueData["$in"]; !ok {
 					return false, errors.New("Not supported")
@@ -994,13 +994,13 @@ type AffiliateMock struct {
 // Query different affiliate properties used in affiliate chaincode
 func (affiliate AffiliateMock) query(selectorKey string, selectorValue interface{}, keyParts []string) (bool, error) {
 	switch selectorKey {
-	case "docType":
+	case "doc_type":
 		return ValidateProperty(selectorValue, string(affiliate.DocType))
 	case "path":
 		return ValidateProperty(selectorValue, string(affiliate.Path))
-	case "parentID":
+	case "parent_id":
 		return ValidateProperty(selectorValue, string(affiliate.ParentID))
-	case "affiliateID":
+	case "affiliate_id":
 		return ValidateProperty(selectorValue, string(affiliate.AffiliateID))
 	case "_id":
 		return ValidateProperty(selectorValue, keyParts[0])
@@ -1012,7 +1012,7 @@ func (affiliate AffiliateMock) query(selectorKey string, selectorValue interface
 // Sort affiliates by given sort properties
 func (affiliate AffiliateMock) sort(nextObj ModelMock, sortKey, sortDirection string) bool {
 	switch sortKey {
-	case "createdAt":
+	case "created_at":
 		if sortDirection == "asc" {
 			return affiliate.CreatedAt < nextObj.(AffiliateMock).CreatedAt
 		} else {
@@ -1038,13 +1038,13 @@ type TransactionMock struct {
 // Query different transaction properties used in transaction chaincode
 func (transaction TransactionMock) query(selectorKey string, selectorValue interface{}, keyParts []string) (bool, error) {
 	switch selectorKey {
-	case "docType":
+	case "doc_type":
 		return ValidateProperty(selectorValue, string(transaction.DocType))
 	case "senders":
 		return ValidateProperty(selectorValue, transaction.Senders)
 	case "receivers":
 		return ValidateProperty(selectorValue, transaction.Receivers)
-	case "txIDs":
+	case "tx_ids":
 		return ValidateProperty(selectorValue, transaction.TxIDs)
 	default:
 		return false, errors.New("Wrong selector key")
